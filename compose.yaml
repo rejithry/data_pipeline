@@ -3,6 +3,7 @@ services:
     image: apache/kafka-native
     ports:
       - "9092:9092"
+    container_name: kafkabroker
     networks:
       - my-net
     environment:
