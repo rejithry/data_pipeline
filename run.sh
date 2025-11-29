@@ -8,6 +8,8 @@ sleep 5
 
 cat data/batch_1.json | kcat -b kafkabroker -t stock_ticks -P
 
+docker exec -it hadoop hadoop fs -chmod -R 777 /
+
 docker exec -it spark_test spark-submit \
    --packages org.apache.hudi:hudi-utilities-slim-bundle_2.12:1.0.1,org.apache.hudi:hudi-spark3.5-bundle_2.12:1.0.1  \
    --conf hoodie.streamer.schemaprovider.source.schema.file=/opt/kafka/config/schema.avsc \
@@ -18,3 +20,4 @@ docker exec -it spark_test spark-submit \
     --source-ordering-field ts    --target-base-path file:///user/hive/warehouse/stock_ticks_cow \
     --target-table stock_ticks_cow --props /var/demo/config/kafka-source.properties \
     --schemaprovider-class org.apache.hudi.utilities.schema.FilebasedSchemaProvider  
+
