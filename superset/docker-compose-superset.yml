@@ -1,0 +1,17 @@
+services:
+
+  superset:
+    image: superset
+    container_name: superset
+    restart: always
+    environment:
+      - SUPERSET_LOAD_EXAMPLES=yes
+      - SUPERSET_SECRET_KEY="some_random_base64_string"
+    networks:
+      - my-net
+    ports:
+      - "9999:8088"
+  
+networks:
+  my-net:
+    external: true

@@ -36,6 +36,9 @@ services:
       - "4040:4040"
       - "7077:7077"
       - "8080:8080"
+      - "10000:10000"
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode1:9864 resourcemanager:8088 kafkabroker:9092 hive-metastore:9083"
     volumes:
       - ./notebooks/:/home/jovyan/work/
     restart: unless-stopped
@@ -43,7 +46,7 @@ services:
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
-    restart: always
+    restart: unless-stopped
     networks:
       - my-net
     ports:
@@ -59,7 +62,7 @@ services:
   datanode1:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode1
-    restart: always
+    restart: unless-stopped
     networks:
       - my-net
     volumes:
@@ -73,7 +76,7 @@ services:
   resourcemanager:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
-    restart: always
+    restart: unless-stopped
     networks:
       - my-net
     environment:
@@ -84,7 +87,7 @@ services:
   nodemanager1:
     image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
     container_name: nodemanager
-    restart: always
+    restart: unless-stopped
     networks:
       - my-net
     environment:
@@ -95,7 +98,7 @@ services:
   historyserver:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
     container_name: historyserver
-    restart: always
+    restart: unless-stopped
     networks:
       - my-net
     environment:
@@ -108,14 +111,106 @@ services:
   client:
     image: client
     container_name: client
-    restart: always
+    restart: unless-stopped
     networks:
       - my-net
+
+  hive-metastore:
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    container_name: hive-metastore
+    restart: unless-stopped
+    networks:
+      - my-net
+    env_file:
+      - ./hadoop.env
+    command: /opt/hive/bin/hive --service metastore
+    environment:
+      SERVICE_PRECONDITION: "hive-metastore-postgresql:5432"
+    ports:
+      - "9083:9083"
+  hive-metastore-postgresql:
+    image: bde2020/hive-metastore-postgresql:2.3.0
+    restart: unless-stopped
+    container_name: hive-metastore-postgresql
+    networks:
+      - my-net
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./hadoop.env
+
+  postgres:
+    image: postgres:14-bullseye
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: default
+    ports:
+      - "6999:5432" # Map host port 5432 to container port 5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persistent data storage
+    networks:
+      - my-net
+    
+  flink-jobmanager:
+    image: apache/flink:latest # Use a specific version like 1.20-scala_2.12
+    ports:
+      - "8081:8081" # Exposes the Flink Web UI
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+    volumes:
+      - flink_data:/tmp/flink-checkpoints
+    networks:
+      - my-net
+
+      
+  flink-taskmanager:
+    image: apache/flink:latest
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+        taskmanager.numberOfTaskSlots: 2 
+    volumes:
+      - flink_data:/tmp/flink-checkpoints
+    networks:
+      - my-net
+
+  flink_processor:
+    image: flink_processor
+    container_name: flink_processor
+    restart: unless-stopped
+    networks:
+      - my-net
+    environment:
+      SERVICE_PRECONDITION: "kafkabroker:9092 postgres:5432"  
+
+
+  # superset:
+  #   image: superset
+  #   container_name: superset
+  #   restart: always
+  #   environment:
+  #     - SUPERSET_LOAD_EXAMPLES=yes
+  #     - SUPERSET_SECRET_KEY="some_random_base64_string"
+  #   networks:
+  #     - my-net
+  #   ports:
+  #     - "9999:8088"
   
 volumes:
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
+  postgres_data:
+  pgdata:
+  flink_data:
 
 networks:
   my-net:

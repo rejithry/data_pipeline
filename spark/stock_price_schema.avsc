@@ -1,6 +1,6 @@
 {
   "type":"record",
-  "name":"stock_ticks",
+  "name":"stock_prices",
   "fields":[{
      "name": "symbol",
      "type": "string"

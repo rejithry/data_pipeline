@@ -1,0 +1,6 @@
+psycopg2-binary
+impyla
+pyhive[hive] 
+sasl
+thrift_sasl
+mysqlclient

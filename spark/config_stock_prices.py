@@ -1,0 +1,10 @@
+table_name = "stock_prices2"
+recordkey = "id"
+path = "hdfs://namenode:9000/stock_prices_2"
+method = "upsert"
+table_type = "COPY_ON_WRITE"
+broker = "kafkabroker:9092"
+topic = "stock_prices"
+schema="/opt/kafka/config/stock_price_schema.avsc"
+checkpoint_location = f"hdfs://namenode:9000/tmp/checkpoint/kafka_to_hive_{table_name}/"  # Replace with a suitable HDFS path
+hudi_table_location = "hdfs://namenode:9000/stock_prices_2"

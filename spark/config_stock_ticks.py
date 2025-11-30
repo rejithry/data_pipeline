@@ -1,0 +1,8 @@
+table_name = "stock_ticks"
+recordkey = "id"
+precombine = "ts"
+method = "upsert"
+table_type = "COPY_ON_WRITE"
+broker = "kafkabroker:9092"
+topic = "stock_ticks"
+schema="/opt/kafka/config/schema.avsc"
