@@ -17,7 +17,7 @@ docker exec -it spark_test spark-submit \
    --class org.apache.hudi.utilities.streamer.HoodieStreamer \
     /opt/spark/jars/hudi-utilities-slim-bundle_2.12-1.0.1.jar \
     --table-type COPY_ON_WRITE   --source-class org.apache.hudi.utilities.sources.JsonKafkaSource \
-    --source-ordering-field ts    --target-base-path file:///user/hive/warehouse/stock_ticks_cow \
+    --source-ordering-field ts    --target-base-path hdfs://namenode:9000/user/hive/warehouse/stock_ticks_cow \
     --target-table stock_ticks_cow --props /var/demo/config/kafka-source.properties \
     --schemaprovider-class org.apache.hudi.utilities.schema.FilebasedSchemaProvider  
 
