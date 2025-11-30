@@ -25,7 +25,7 @@ kafka_df = spark \
 .format("kafka") \
 .option("avroSchema", avro_schema) \
 .option("kafka.bootstrap.servers", "kafkabroker:9092") \
-.option("subscribe", "stock_ticks") \
+.option("subscribe", "stock_prices") \
 .option("startingOffsets", "earliest") \
 .load()
 
@@ -36,17 +36,17 @@ parsed_df = kafka_df.selectExpr("CAST(value AS STRING)") \
 
 
 db_name = "hudidb"
-table_name = "stock_ticks2"
+table_name = "stock_prices2"
 recordkey = 'symbol'
 precombine = 'ts'
-path = "hdfs://namenode:9000/stock_ticks_2"
+path = "hdfs://namenode:9000/stock_prices_2"
 method = 'upsert'
 table_type = "COPY_ON_WRITE"
 BOOT_STRAP = "kafkabroker:9092"
-TOPIC = "stock_ticks"
+TOPIC = "stock_prices"
 hudi_options = {
     'hoodie.table.name': table_name,
-    'hoodie.datasource.write.recordkey.field': 'symbol',
+    'hoodie.datasource.write.recordkey.field': 'id',
     'hoodie.datasource.write.table.name': table_name,
     'hoodie.datasource.write.operation': 'upsert',
     'hoodie.datasource.write.precombine.field': 'timestamp',
