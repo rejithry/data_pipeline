@@ -3,6 +3,8 @@ import time
 import random
 from datetime import datetime
 from confluent_kafka import Producer
+import uuid
+
 
 # -------------------------------
 # Kafka Configuration
@@ -46,7 +48,8 @@ def generate_stock_data():
         "symbol": stock,
         "price": round(base_prices[stock], 2),
         "volume": random.randint(100, 20000),
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
+        "id": uuid.uuid4(),
     }
 
     return data
