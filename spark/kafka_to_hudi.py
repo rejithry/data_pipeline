@@ -1,3 +1,5 @@
+from pyspark.sql import SparkSession
+
 from pyspark.sql.functions import col, from_json
 
 spark = SparkSession.builder.getOrCreate()

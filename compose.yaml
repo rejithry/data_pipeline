@@ -104,6 +104,13 @@ services:
       - hadoop_historyserver:/hadoop/yarn/timeline
     env_file:
       - ./hadoop.env
+
+  client:
+    image: client
+    container_name: client
+    restart: always
+    networks:
+      - my-net
   
 volumes:
   hadoop_namenode:

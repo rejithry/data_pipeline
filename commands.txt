@@ -1,0 +1,14 @@
+pyspark --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+  --conf spark.kryo.registrator=org.apache.spark.HoodieSparkKryoRegistrar \
+  --conf spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension \
+  --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog \
+   --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.spark:spark-avro_2.12:3.5.0,org.apache.hudi:hudi-spark3.5-bundle_2.12:1.0.1
+
+
+
+pyspark --conf spark.sql.catalogImplementation=hive --conf spark.sql.warehouse.dir=/user/hive/warehouse --conf spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension --conf spark.sql.hive.convertMetastoreParquet=false --conf className=org.apache.hudi --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.kryo.registrator=org.apache.hudi.kryo.HoodieKryoRegistrar --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.spark:spark-avro_2.12:3.5.0,org.apache.hudi:hudi-spark3.5-bundle_2.12:1.0.1
+
+
+~/Downloads//kafka-console-consumer.sh --topic stock_ticks --bootstrap-server kafkabroker:9020 --from-beginning
+
+ --conf spark.sql.catalogImplementation=hive --conf spark.sql.warehouse.dir=/user/hive/warehouse --conf spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension --conf spark.sql.hive.convertMetastoreParquet=false --conf className=org.apache.hudi --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.kryo.registrator=org.apache.hudi.kryo.HoodieKryoRegistrar
