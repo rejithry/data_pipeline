@@ -49,7 +49,7 @@ def generate_stock_data():
         "price": round(base_prices[stock], 2),
         "volume": random.randint(100, 20000),
         "timestamp": datetime.utcnow().isoformat(),
-        "id": uuid.uuid4(),
+        "id": str(uuid.uuid4()),
     }
 
     return data
